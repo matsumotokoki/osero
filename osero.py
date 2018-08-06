@@ -42,6 +42,12 @@ def koma_draw(screen):
             if position[i,j]==2:
                 pygame.draw.circle(screen, (white), (45+60*(i),45+60*(j)), 25)
 
+def mouse_get_position():
+    mouse_pressed = pygame.mouse.get_pressed()
+    if mouse_pressed[0]:  # 左クリック
+        x, y = pygame.mouse.get_pos()
+        return(x,y)
+
 game_mode = True
 
 while game_mode:
@@ -56,5 +62,10 @@ while game_mode:
             if event.key == K_ESCAPE:
                 sys.exit()
             if event.key == K_SPACE:
-                print(position)
                 koma_draw(screen)
+        if event.type == MOUSEBUTTONDOWN and event.button == 1:
+            mouse_position=mouse_get_position()
+            for i in range(8):
+                for j in range(8):
+                    if mouse_position[0]>(20+60*i) and mouse_position[0]<(60+60*i) and mouse_position[1]>(25+60*j) and mouse_position[1]<(60+60*j):
+                        position[i,j]=1
