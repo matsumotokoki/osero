@@ -14,8 +14,9 @@ green=(55,255,55)
 white=(255,255,255)
 brack=(0,0,0)
 position = np.zeros((8,8),dtype=int)
-position[3,3]=position[4,4]=1
+position[3,3]=position[4,4]=position[2,3]=position[5,4]=position[4,5]=position[3,2]=1
 position[3,4]=position[4,3]=2
+position[0,0]=position[7,7]=1
 #back_img = pygame.image.load("./back.png").convert()
 def initial_draw(screen):
     pygame.display.update()
@@ -44,9 +45,100 @@ def koma_draw(screen):
 
 def mouse_get_position():
     mouse_pressed = pygame.mouse.get_pressed()
-    if mouse_pressed[0]:  # 左クリック
+    if mouse_pressed[0]:  
         x, y = pygame.mouse.get_pos()
         return(x,y)
+
+def reverse(last_position):
+    right_frag=True 
+    left_frag=True
+    up_frag=True
+    down_frag=True
+    position_x=last_position[0]
+    position_y=last_position[1]
+    while right_frag:
+        if position_x==7:
+            right_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
+        if position[position_x+1,position_y]==1:
+            position_x+=1
+        elif position[position_x+1,position_y]==2:
+            for reverse_time in range(last_position[0]+1,position_x+1):
+                position[reverse_time,position_y]=2
+            right_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
+        elif position[position_x+1,position_y]==0 or position_x>8:
+            right_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
+
+    while left_frag:
+        if position_x==0:
+            left_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
+        if position[position_x-1,position_y]==1:
+            position_x-=1
+        elif position[position_x-1,position_y]==2:
+            for reverse_time in range(position_x-1,last_position[0]):
+                position[reverse_time,position_y]=2
+            left_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
+        elif position[position_x-1,position_y]==0 or position_x<=0:
+            left_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
+
+    while up_frag:
+        if position_y==0:
+            up_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
+        if position[position_x,position_y-1]==1:
+            position_y-=1
+        elif position[position_x,position_y-1]==2:
+            for reverse_time in range(position_y,last_position[1]):
+                position[position_x,reverse_time]=2
+            up_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
+        elif position[position_x,position_y-1]==0 or position_y<=0:
+            up_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
+
+    while down_frag:
+        if position_y==7:
+            down_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
+        if position[position_x,position_y+1]==1:
+            position_y+=1
+        elif position[position_x,position_y+1]==2:
+            for reverse_time in range(last_position[1]+1,position_y+1):
+                position[position_x,reverse_time]=2
+            down_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
+        elif position[position_x,position_y+1]==0 or position_y>8:
+            down_frag=False
+            position_x=last_position[0]
+            position_y=last_position[1]
+            break
 
 game_mode = True
 
@@ -68,4 +160,7 @@ while game_mode:
             for i in range(8):
                 for j in range(8):
                     if mouse_position[0]>(20+60*i) and mouse_position[0]<(60+60*i) and mouse_position[1]>(25+60*j) and mouse_position[1]<(60+60*j):
-                        position[i,j]=1
+                        position[i,j]=2
+                        last_position=[i,j]
+                        print(last_position)
+                        reverse(last_position)
