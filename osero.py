@@ -38,18 +38,22 @@ def initial_draw(screen):
     pygame.draw.rect(screen, (purple), Rect(510,20,230,450),0)
     pygame.draw.rect(screen, (white), Rect(520,30,210,120),0)
     pygame.draw.rect(screen, (brack), Rect(520,30,210,120),5)
+    pygame.draw.rect(screen, (white), Rect(520,160,210,120),0)
+    pygame.draw.rect(screen, (brack), Rect(520,160,210,120),5)
     sysfont = pygame.font.SysFont(None, 80)
     sysfont_turn = pygame.font.SysFont(None, 50)
     amount_brack = sysfont.render(point[0],  True, (0,0,0))
     amount_white = sysfont.render(point[1],  True, (0,0,0))
     win_white = sysfont_turn.render("white win!!",  True, (0,255,155))
     win_brack = sysfont_turn.render("brack win!!",  True, (0,255,155))
+    pass_txt = sysfont.render("pass",  True, (255,0,0))
     turn_white = sysfont_turn.render(turn[1],  True, (0,0,0))
     turn_brack = sysfont_turn.render(turn[0], True, (0,0,0))
     hihun= sysfont.render("-",  True, (0,0,0))
     screen.blit(amount_white, (550,40))
     screen.blit(amount_brack, (550+100,40))
     screen.blit(hihun, (540+80,40))
+    screen.blit(pass_txt, (560,190))
     white_num=point[3]
     brack_num=point[4]
     if white_num > brack_num and point[2]==64:
@@ -576,3 +580,7 @@ while game_mode:
                                 switch = 1
                         point=count_koma()
                         print(point)
+            if mouse_position[0]>525 and mouse_position[0]<725 and mouse_position[1]>165 and mouse_position[1]<375:
+                if switch==1:
+                    switch=0
+                else: switch=1
