@@ -1,7 +1,6 @@
 osero
 ====
 
-Overview
 made osero which is borad_game   
 ## Description
 I use pyhton3 and pygame
