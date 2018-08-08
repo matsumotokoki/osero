@@ -16,21 +16,41 @@ white=(255,255,255)
 brack=(0,0,0)
 purple=(155,155,255)
 switch=1
+point = ["2","2"]
+turn = ["brack turn","white turn"]
 # position = np.zeros((8,8),dtype=int)
-position = np.asarray([[2,0,0,1,2,0,0,0],
-                       [0,1,0,0,0,0,0,0],
-                       [0,1,1,0,0,1,0,0],
-                       [0,1,0,2,2,0,0,0],
-                       [2,0,0,2,2,0,0,0],
-                       [1,0,1,0,0,0,0,0],
+
+#trance mat
+position = np.asarray([[0,0,0,0,0,0,0,0],
                        [0,0,0,0,0,0,0,0],
-                       [0,0,0,0,0,0,0,0]])#trance mat
+                       [0,0,0,0,0,0,0,0],
+                       [0,0,0,2,1,0,0,0],
+                       [0,0,0,1,2,0,0,0],
+                       [0,0,0,0,0,0,0,0],
+                       [0,0,0,0,0,0,0,0],
+                       [0,0,0,0,0,0,0,0]])
 def initial_draw(screen):
     pygame.display.update()
     pygame.draw.rect(screen, (white), Rect(0,0,750,500),0)
     pygame.draw.rect(screen, (green), Rect(10,10,500-15,500-15),0)
     pygame.draw.rect(screen, (brack), Rect(10,10,500-15,500-15),5)
     pygame.draw.rect(screen, (purple), Rect(510,20,230,450),0)
+    pygame.draw.rect(screen, (white), Rect(520,30,210,120),0)
+    pygame.draw.rect(screen, (brack), Rect(520,30,210,120),5)
+    sysfont = pygame.font.SysFont(None, 80)
+    sysfont_turn = pygame.font.SysFont(None, 40)
+    amount_brack = sysfont.render(point[0],  True, (0,0,0))
+    amount_white = sysfont.render(point[1],  True, (0,0,0))
+    turn_white = sysfont_turn.render(turn[1],  True, (0,0,0))
+    turn_brack = sysfont_turn.render(turn[0], True, (0,0,0))
+    hihun= sysfont.render("-",  True, (0,0,0))
+    screen.blit(amount_white, (540,40))
+    screen.blit(amount_brack, (540+140,40))
+    screen.blit(hihun, (540+80,40))
+    if switch == 0:
+        screen.blit(turn_brack ,(550,100))
+    elif switch == 1:
+        screen.blit(turn_white ,(550,100))
     pygame.draw.circle(screen, (brack), (135,135), 8)
     pygame.draw.circle(screen, (brack), (135+240,135), 8)
     pygame.draw.circle(screen, (brack), (135,135+240), 8)
@@ -55,7 +75,7 @@ def count_koma():
             if position[i,j]==brack_position:brack_num+=1
             elif position[i,j]==white_position:white_num+=1
     all_number = [white_num,brack_num]
-    print(str(all_number[0])+"-"+str(all_number[1]))
+    return str(white_num),str(brack_num)
 
 def mouse_get_position():
     mouse_pressed = pygame.mouse.get_pressed()
@@ -442,12 +462,12 @@ while game_mode:
                 for j in range(8):
                     if mouse_position[0]>(20+60*i) and mouse_position[0]<(60+60*i) and mouse_position[1]>(25+60*j) and mouse_position[1]<(60+60*j):
                         last_position=[i,j]
-                        if switch == 1:
+                        if switch == 1 and position[i,j]==0:
                             position[i,j]=2
                             reverse(last_position)
                             switch = 0
-                        elif switch == 0:
+                        elif switch == 0 and position[i,j]==0:
                             position[i,j]=1
                             reverse(last_position)
                             switch = 1
-                        count_koma()
+                        point=count_koma()
