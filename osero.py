@@ -249,7 +249,6 @@ def reverse(last_position):
                     position[reverse_time,last_position[1]+1]=2
                     last_position[1]+=1
                     count_reverse+=1;
-                print(count_reverse)  
                 if count_reverse != 0:
                     right_down_frag=True
                 else:
@@ -322,8 +321,6 @@ def reverse(last_position):
         if right_frag==False and left_frag==False and up_frag==False and down_frag==False and right_up_frag==False and left_up_frag ==False and right_down_frag ==False and left_down_frag ==False:
             position[last_position[0],last_position[1]]=0
             reverse_frag = False
-        print("right_frag,left_frag,up_frag,down_frag,right_up_frag,right_down_frag,left_up_frag,left_down_frag,reverse_frag")
-        print(right_frag,left_frag,up_frag,down_frag,right_up_frag,right_down_frag,left_up_frag,left_down_frag,reverse_frag)
 
     if switch==0:
         while right_frag:
@@ -544,7 +541,6 @@ def reverse(last_position):
         if right_frag==False and left_frag==False and up_frag==False and down_frag==False and right_up_frag==False and left_up_frag ==False and right_down_frag ==False and left_down_frag ==False:
             position[last_position[0],last_position[1]]=0
             reverse_frag = False
-        # print(right_frag,left_frag,up_frag,down_frag,right_up_frag,right_down_frag,left_up_frag,left_down_frag,reverse_frag)
     return reverse_frag
 
 game_mode = True
@@ -579,7 +575,6 @@ while game_mode:
                             if frag_reverse == True:
                                 switch = 1
                         point=count_koma()
-                        print(point)
             if mouse_position[0]>525 and mouse_position[0]<725 and mouse_position[1]>165 and mouse_position[1]<375:
                 if switch==1:
                     switch=0
