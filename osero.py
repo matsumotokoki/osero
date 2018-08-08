@@ -16,8 +16,8 @@ green=(55,255,55)
 white=(255,255,255)
 brack=(0,0,0)
 purple=(155,155,255)
-switch=1
-point = ["2","2"]
+switch=0
+point = ["2","2",0 ,0 ,0]
 turn = ["brack turn","white turn"]
 # position = np.zeros((8,8),dtype=int)
 
@@ -25,8 +25,8 @@ turn = ["brack turn","white turn"]
 position = np.asarray([[0,0,0,0,0,0,0,0],
                        [0,0,0,0,0,0,0,0],
                        [0,0,0,0,0,0,0,0],
-                       [0,0,0,2,1,0,0,0],
                        [0,0,0,1,2,0,0,0],
+                       [0,0,0,2,1,0,0,0],
                        [0,0,0,0,0,0,0,0],
                        [0,0,0,0,0,0,0,0],
                        [0,0,0,0,0,0,0,0]])
@@ -39,19 +39,27 @@ def initial_draw(screen):
     pygame.draw.rect(screen, (white), Rect(520,30,210,120),0)
     pygame.draw.rect(screen, (brack), Rect(520,30,210,120),5)
     sysfont = pygame.font.SysFont(None, 80)
-    sysfont_turn = pygame.font.SysFont(None, 40)
+    sysfont_turn = pygame.font.SysFont(None, 50)
     amount_brack = sysfont.render(point[0],  True, (0,0,0))
     amount_white = sysfont.render(point[1],  True, (0,0,0))
+    win_white = sysfont_turn.render("white win!!",  True, (0,255,155))
+    win_brack = sysfont_turn.render("brack win!!",  True, (0,255,155))
     turn_white = sysfont_turn.render(turn[1],  True, (0,0,0))
     turn_brack = sysfont_turn.render(turn[0], True, (0,0,0))
     hihun= sysfont.render("-",  True, (0,0,0))
-    screen.blit(amount_white, (540,40))
-    screen.blit(amount_brack, (540+140,40))
+    screen.blit(amount_white, (550,40))
+    screen.blit(amount_brack, (550+100,40))
     screen.blit(hihun, (540+80,40))
+    white_num=point[3]
+    brack_num=point[4]
+    if white_num > brack_num and point[2]==64:
+        screen.blit(win_white, (540,400))
+    elif white_num < brack_num and point[2]==64:
+        screen.blit(win_brack, (540,400))
     if switch == 0:
-        screen.blit(turn_brack ,(550,100))
+        screen.blit(turn_brack ,(540,100))
     elif switch == 1:
-        screen.blit(turn_white ,(550,100))
+        screen.blit(turn_white ,(540,100))
     pygame.draw.circle(screen, (brack), (135,135), 8)
     pygame.draw.circle(screen, (brack), (135+240,135), 8)
     pygame.draw.circle(screen, (brack), (135,135+240), 8)
@@ -76,7 +84,7 @@ def count_koma():
             if position[i,j]==brack_position:brack_num+=1
             elif position[i,j]==white_position:white_num+=1
     all_number = [white_num,brack_num]
-    return str(white_num),str(brack_num)
+    return str(white_num),str(brack_num),white_num+brack_num,white_num,brack_num
 
 def mouse_get_position():
     mouse_pressed = pygame.mouse.get_pressed()
@@ -87,6 +95,7 @@ def mouse_get_position():
 def reverse(last_position):
     right_frag=left_frag=up_frag=down_frag=right_up_frag=right_down_frag=left_up_frag=left_down_frag=True
     reverse_frag=True
+    count_reverse=0;
     position_x=last_position[0]
     position_y=last_position[1]
     if switch==1:
@@ -101,7 +110,12 @@ def reverse(last_position):
             elif position[position_x+1,position_y]==2:
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,position_y]=2
-                right_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    right_frag=True
+                else:
+                    right_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -122,7 +136,12 @@ def reverse(last_position):
             elif position[position_x-1,position_y]==2:
                 for reverse_time in range(position_x-1,last_position[0]):
                     position[reverse_time,position_y]=2
-                left_frag=True
+                    count_reverse+=1;
+                if count_reverse != 1:
+                    left_frag=True
+                else:
+                    left_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -143,7 +162,12 @@ def reverse(last_position):
             elif position[position_x,position_y-1]==2:
                 for reverse_time in range(position_y,last_position[1]):
                     position[position_x,reverse_time]=2
-                up_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    up_frag=True
+                else:
+                    up_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -164,7 +188,12 @@ def reverse(last_position):
             elif position[position_x,position_y+1]==2:
                 for reverse_time in range(last_position[1]+1,position_y+1):
                     position[position_x,reverse_time]=2
-                down_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    down_frag=True
+                else:
+                    down_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -187,7 +216,12 @@ def reverse(last_position):
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,last_position[1]-1]=2
                     last_position[1]-=1
-                right_up_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    right_up_frag=True
+                else:
+                    right_up_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -210,7 +244,13 @@ def reverse(last_position):
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,last_position[1]+1]=2
                     last_position[1]+=1
-                right_down_frag=True
+                    count_reverse+=1;
+                print(count_reverse)  
+                if count_reverse != 0:
+                    right_down_frag=True
+                else:
+                    right_down_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -233,7 +273,12 @@ def reverse(last_position):
                 for reverse_time in range(position_x,last_position[0]):
                     position[reverse_time,position_y]=2
                     position_y+=1
-                left_up_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    left_up_frag=True
+                else:
+                    left_up_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -256,7 +301,12 @@ def reverse(last_position):
                 for reverse_time in range(position_x,last_position[0]):
                     position[reverse_time,position_y]=2
                     position_y-=1
-                left_down_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    left_down_frag=True
+                else:
+                    left_down_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -268,6 +318,8 @@ def reverse(last_position):
         if right_frag==False and left_frag==False and up_frag==False and down_frag==False and right_up_frag==False and left_up_frag ==False and right_down_frag ==False and left_down_frag ==False:
             position[last_position[0],last_position[1]]=0
             reverse_frag = False
+        print("right_frag,left_frag,up_frag,down_frag,right_up_frag,right_down_frag,left_up_frag,left_down_frag,reverse_frag")
+        print(right_frag,left_frag,up_frag,down_frag,right_up_frag,right_down_frag,left_up_frag,left_down_frag,reverse_frag)
 
     if switch==0:
         while right_frag:
@@ -281,7 +333,12 @@ def reverse(last_position):
             elif position[position_x+1,position_y]==1:
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,position_y]=1
-                right_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    right_frag=True
+                else:
+                    right_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -302,7 +359,12 @@ def reverse(last_position):
             elif position[position_x-1,position_y]==1:
                 for reverse_time in range(position_x-1,last_position[0]):
                     position[reverse_time,position_y]=1
-                left_frag=True
+                    count_reverse+=1;
+                if count_reverse != 1:
+                    left_frag=True
+                else:
+                    left_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -323,7 +385,12 @@ def reverse(last_position):
             elif position[position_x,position_y-1]==1:
                 for reverse_time in range(position_y,last_position[1]):
                     position[position_x,reverse_time]=1
-                up_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    up_frag=True
+                else:
+                    up_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -344,7 +411,12 @@ def reverse(last_position):
             elif position[position_x,position_y+1]==1:
                 for reverse_time in range(last_position[1]+1,position_y+1):
                     position[position_x,reverse_time]=1
-                down_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    down_frag=True
+                else:
+                    down_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -367,7 +439,12 @@ def reverse(last_position):
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,last_position[1]-1]=1
                     last_position[1]-=1
-                right_up_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    right_up_frag=True
+                else:
+                    right_up_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -390,7 +467,12 @@ def reverse(last_position):
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,last_position[1]+1]=1
                     last_position[1]+=1
-                right_down_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    right_down_frag=True
+                else:
+                    right_down_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -413,7 +495,12 @@ def reverse(last_position):
                 for reverse_time in range(position_x,last_position[0]):
                     position[reverse_time,position_y]=1
                     position_y+=1
-                left_up_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    left_up_frag=True
+                else:
+                    left_up_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -436,7 +523,12 @@ def reverse(last_position):
                 for reverse_time in range(position_x,last_position[0]):
                     position[reverse_time,position_y]=1
                     position_y-=1
-                left_down_frag=True
+                    count_reverse+=1;
+                if count_reverse != 0:
+                    left_down_frag=True
+                else:
+                    left_down_frag=False
+                count_reverse=0
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -448,6 +540,7 @@ def reverse(last_position):
         if right_frag==False and left_frag==False and up_frag==False and down_frag==False and right_up_frag==False and left_up_frag ==False and right_down_frag ==False and left_down_frag ==False:
             position[last_position[0],last_position[1]]=0
             reverse_frag = False
+        # print(right_frag,left_frag,up_frag,down_frag,right_up_frag,right_down_frag,left_up_frag,left_down_frag,reverse_frag)
     return reverse_frag
 
 game_mode = True
@@ -464,8 +557,7 @@ while game_mode:
             if event.key == K_ESCAPE:
                 sys.exit()
             if event.key == K_SPACE:
-                koma_draw(screen)
-                print(position[0,4])
+                print(position)
         if event.type == MOUSEBUTTONDOWN and event.button == 1:
             mouse_position=mouse_get_position()
             for i in range(8):
@@ -479,7 +571,8 @@ while game_mode:
                                 switch = 0
                         elif switch == 0 and position[i,j]==0:
                             position[i,j]=1
-                            reverse(last_position)
+                            frag_reverse=reverse(last_position)
                             if frag_reverse == True:
                                 switch = 1
                         point=count_koma()
+                        print(point)
