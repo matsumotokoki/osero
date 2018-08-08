@@ -3,6 +3,7 @@ from pygame.locals import *
 import sys
 import numpy as np
 
+
 SCREEN_SIZE = (750,500);
 pygame.init()
 screen = pygame.display.set_mode(SCREEN_SIZE)
@@ -85,6 +86,7 @@ def mouse_get_position():
 
 def reverse(last_position):
     right_frag=left_frag=up_frag=down_frag=right_up_frag=right_down_frag=left_up_frag=left_down_frag=True
+    reverse_frag=True
     position_x=last_position[0]
     position_y=last_position[1]
     if switch==1:
@@ -99,7 +101,7 @@ def reverse(last_position):
             elif position[position_x+1,position_y]==2:
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,position_y]=2
-                right_frag=False
+                right_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -120,7 +122,7 @@ def reverse(last_position):
             elif position[position_x-1,position_y]==2:
                 for reverse_time in range(position_x-1,last_position[0]):
                     position[reverse_time,position_y]=2
-                left_frag=False
+                left_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -141,7 +143,7 @@ def reverse(last_position):
             elif position[position_x,position_y-1]==2:
                 for reverse_time in range(position_y,last_position[1]):
                     position[position_x,reverse_time]=2
-                up_frag=False
+                up_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -162,7 +164,7 @@ def reverse(last_position):
             elif position[position_x,position_y+1]==2:
                 for reverse_time in range(last_position[1]+1,position_y+1):
                     position[position_x,reverse_time]=2
-                down_frag=False
+                down_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -185,19 +187,19 @@ def reverse(last_position):
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,last_position[1]-1]=2
                     last_position[1]-=1
-                right_up_frag=False
+                right_up_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
             elif position[position_x+1,position_y-1]==0 or position_x>8 or position_y<0:
-                right_frag=False
+                right_up_frag=False
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
 
         while right_down_frag:
             if position_x==7 or position_y==7:
-                right_up_frag=False
+                right_down_frag=False
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -208,12 +210,12 @@ def reverse(last_position):
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,last_position[1]+1]=2
                     last_position[1]+=1
-                right_up_frag=False
+                right_down_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
             elif position[position_x+1,position_y+1]==0 or position_x>8 or position_y>8:
-                right_up_frag=False
+                right_down_frag=False
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -231,12 +233,12 @@ def reverse(last_position):
                 for reverse_time in range(position_x,last_position[0]):
                     position[reverse_time,position_y]=2
                     position_y+=1
-                left_up_frag=False
+                left_up_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
             elif position[position_x-1,position_y-1]==0 or position_x<0 or position_y<0:
-                left_frag=False
+                left_up_frag=False
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -254,7 +256,7 @@ def reverse(last_position):
                 for reverse_time in range(position_x,last_position[0]):
                     position[reverse_time,position_y]=2
                     position_y-=1
-                left_down_frag=False
+                left_down_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -263,6 +265,9 @@ def reverse(last_position):
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
+        if right_frag==False and left_frag==False and up_frag==False and down_frag==False and right_up_frag==False and left_up_frag ==False and right_down_frag ==False and left_down_frag ==False:
+            position[last_position[0],last_position[1]]=0
+            reverse_frag = False
 
     if switch==0:
         while right_frag:
@@ -276,7 +281,7 @@ def reverse(last_position):
             elif position[position_x+1,position_y]==1:
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,position_y]=1
-                right_frag=False
+                right_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -297,7 +302,7 @@ def reverse(last_position):
             elif position[position_x-1,position_y]==1:
                 for reverse_time in range(position_x-1,last_position[0]):
                     position[reverse_time,position_y]=1
-                left_frag=False
+                left_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -318,7 +323,7 @@ def reverse(last_position):
             elif position[position_x,position_y-1]==1:
                 for reverse_time in range(position_y,last_position[1]):
                     position[position_x,reverse_time]=1
-                up_frag=False
+                up_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -339,7 +344,7 @@ def reverse(last_position):
             elif position[position_x,position_y+1]==1:
                 for reverse_time in range(last_position[1]+1,position_y+1):
                     position[position_x,reverse_time]=1
-                down_frag=False
+                down_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -362,19 +367,19 @@ def reverse(last_position):
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,last_position[1]-1]=1
                     last_position[1]-=1
-                right_up_frag=False
+                right_up_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
             elif position[position_x+1,position_y-1]==0 or position_x>8 or position_y<0:
-                right_frag=False
+                right_up_frag=False
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
 
         while right_down_frag:
             if position_x==7 or position_y==7:
-                right_up_frag=False
+                right_down_frag=False
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -385,12 +390,12 @@ def reverse(last_position):
                 for reverse_time in range(last_position[0]+1,position_x+1):
                     position[reverse_time,last_position[1]+1]=1
                     last_position[1]+=1
-                right_up_frag=False
+                right_down_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
             elif position[position_x+1,position_y+1]==0 or position_x>8 or position_y>8:
-                right_up_frag=False
+                right_down_frag=False
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -408,12 +413,12 @@ def reverse(last_position):
                 for reverse_time in range(position_x,last_position[0]):
                     position[reverse_time,position_y]=1
                     position_y+=1
-                left_up_frag=False
+                left_up_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
             elif position[position_x-1,position_y-1]==0 or position_x<0 or position_y<0:
-                left_frag=False
+                left_up_frag=False
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -431,7 +436,7 @@ def reverse(last_position):
                 for reverse_time in range(position_x,last_position[0]):
                     position[reverse_time,position_y]=1
                     position_y-=1
-                left_down_frag=False
+                left_down_frag=True
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
@@ -440,6 +445,11 @@ def reverse(last_position):
                 position_x=last_position[0]
                 position_y=last_position[1]
                 break
+        if right_frag==False and left_frag==False and up_frag==False and down_frag==False and right_up_frag==False and left_up_frag ==False and right_down_frag ==False and left_down_frag ==False:
+            position[last_position[0],last_position[1]]=0
+            reverse_frag = False
+    return reverse_frag
+
 game_mode = True
 
 while game_mode:
@@ -464,10 +474,12 @@ while game_mode:
                         last_position=[i,j]
                         if switch == 1 and position[i,j]==0:
                             position[i,j]=2
-                            reverse(last_position)
-                            switch = 0
+                            frag_reverse=reverse(last_position)
+                            if frag_reverse == True:
+                                switch = 0
                         elif switch == 0 and position[i,j]==0:
                             position[i,j]=1
                             reverse(last_position)
-                            switch = 1
+                            if frag_reverse == True:
+                                switch = 1
                         point=count_koma()
