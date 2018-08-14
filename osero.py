@@ -1,5 +1,7 @@
 import const
+import agent
 import pygame
+from time import sleep
 from pygame.locals import *
 import sys
 import numpy as np
@@ -12,6 +14,7 @@ red=(255,0,0)
 gray=(100,100,100)
 purple=(155,155,255)
 d_purple=(255,0,255)
+
 class Osero:
     def __init__(self):
         pygame.init()
@@ -48,6 +51,7 @@ class Osero:
 
         self.white_win = sysfont_small.render("white win!!",True, (0,55,155)) 
         self.brack_win = sysfont_small.render("brack win!!",True, (0,55,155)) 
+        self.draw = sysfont_small.render("draw game!!",True, (0,55,155)) 
         self.white_num = sysfont_big.render(str(amount[0]),True, (brack)) 
         self.brack_num = sysfont_big.render(str(amount[1]),True, (brack)) 
         self.hihun = sysfont_big.render("-",True, (brack)) 
@@ -69,6 +73,8 @@ class Osero:
             self.screen.blit(self.brack_win, (530,430))
         elif (amount[0]<amount[1] and amount[2]==64) or (amount[0]==0):
             self.screen.blit(self.white_win, (530,430))
+        elif (amount[0]==amount[1] and amount[2]==64):
+            self.screen.blit(self.draw, (530,430))
 
     def storn_draw(self,screen):
         for i in range(8):
@@ -154,7 +160,6 @@ class Osero:
                         if frag==9 and const.storn_position[i,j]==3:
                             const.storn_position[i,j]=0
                         frag=1
-
 
     def reverse(self,last_position):
         DX=[1,1,0,-1,-1,-1,0,1]
@@ -248,5 +253,92 @@ class Osero:
                     else:
                         self.SWITCH=1
 
+class GA(Osero):
+   def __init__(self): 
+        pygame.init()
+        self.screen = pygame.display.set_mode(SCR_RECT.size)
+        self.SWITCH=0
+        while True:
+            pygame.display.update()
+            self.draw_back()
+            self.amount = self.count_storn()
+            self.draw_txt(self.screen,self.amount)
+            self.next_draw()
+            self.storn_draw(self.screen)
+            pygame.display.set_caption("osero")
+            self.event()
+
+class VS_AI(Osero):
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode(SCR_RECT.size)
+        self.SWITCH=0
+        while True:
+            pygame.display.update()
+            self.draw_back()
+            self.amount = self.count_storn()
+            self.draw_txt(self.screen,self.amount)
+            self.next_draw()
+            self.storn_draw(self.screen)
+            pygame.display.set_caption("osero")
+            self.single_event()
+
+    def AI_action(self):
+        stock=-51
+        for i in range(8):
+            for j in range(8):
+                if const.storn_position[i,j] == 3 and stock<=const.value_storn[i,j]:
+                    stock=const.value_storn[i,j]
+                    AI_select=[i,j]
+        if stock==-51:
+            self.SWITCH=0
+            print("AI can't put!!")
+        if self.SWITCH==1:
+            const.storn_position[[AI_select[0]],[AI_select[1]]]=2
+            self.reverse(AI_select)
+            self.SWITCH=0
+
+    def single_event(self):
+        for event in pygame.event.get():
+            if event.type==QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type==KEYDOWN:
+                if event.key==K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+                if event.key == K_SPACE:
+                    print(const.storn_position)
+            if event.type == MOUSEBUTTONDOWN and event.button == 1:
+                mouse_position=self.mouse_get_position()
+                for i in range(8):
+                    for j in range(8):
+                        if mouse_position[0]>(20+const.CS*i) and mouse_position[0]<(60+const.CS*i) and mouse_position[1]>(25+const.CS*j) and mouse_position[1]<(60+const.CS*j):
+                            self.last_position=[j,i]
+                            if self.SWITCH==0 and const.storn_position[j,i]==3:
+                                const.storn_position[j,i]=1
+                                count_reverse=self.reverse(self.last_position)
+                                if count_reverse!=9:
+                                    self.SWITCH=1
+                                    self.next_draw()
+                                    self.AI_action()
+                                else: const.storn_position[j,i]=0
+
+                if mouse_position[0]>525 and mouse_position[0]<725 and mouse_position[1]>295 and mouse_position[1]<405:
+                    const.storn_position = np.asarray([[0,0,0,0,0,0,0,0],
+                                                       [0,0,0,0,0,0,0,0],
+                                                       [0,0,0,0,0,0,0,0],
+                                                       [0,0,0,1,2,0,0,0],
+                                                       [0,0,0,2,1,0,0,0],
+                                                       [0,0,0,0,0,0,0,0],
+                                                       [0,0,0,0,0,0,0,0],
+                                                       [0,0,0,0,0,0,0,0]])
+                if mouse_position[0]>525 and mouse_position[0]<725 and mouse_position[1]>165 and mouse_position[1]<275:
+                    if self.SWITCH==1:
+                        self.SWITCH=0
+                    else:
+                        self.SWITCH=1
+                        self.next_draw()
+                        self.AI_action()
 if __name__ == '__main__':
-    Osero()
+    VS_AI()
