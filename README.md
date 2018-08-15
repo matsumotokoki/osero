@@ -17,4 +17,4 @@ Place your stones to sandwich other's, then turn over the sandwiched
 a stone or stones.
 Finaly,players who have more stones will win.
 ## image
-!/home/koki/Pictures/osero.png
+![screen](/home/koki/Pictures/osero.png)
