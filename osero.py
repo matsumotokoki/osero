@@ -1,5 +1,6 @@
 import const
 import agent
+import sys
 import pygame
 from time import sleep
 from pygame.locals import *
@@ -8,6 +9,7 @@ import numpy as np
 
 SCR_RECT = Rect(0,0,const.SCR_X,const.SCR_y)
 green=(55,255,55)
+r_green=(125,155,125)
 white=(255,255,255)
 brack=(0,0,0)
 red=(255,0,0)
@@ -80,14 +82,14 @@ class Osero:
         for i in range(8):
             for j in range(8):
                 if const.storn_position[j,i]==0:
-                    pygame.draw.circle(self.screen, (green), (45+60*(i),45+60*(j)), 25)
+                    pygame.draw.circle(self.screen, (green), (45+60*(i),45+60*(j)), 23)
                 elif const.storn_position[j,i]==1:
-                    pygame.draw.circle(self.screen, (brack), (45+60*(i),45+60*(j)), 25)
+                    pygame.draw.circle(self.screen, (brack), (45+60*(i),45+60*(j)), 23)
                 elif const.storn_position[j,i]==2:
-                    pygame.draw.circle(self.screen, (white), (45+60*(i),45+60*(j)), 25)
+                    pygame.draw.circle(self.screen, (white), (45+60*(i),45+60*(j)), 23)
                 elif const.storn_position[j,i]==3:
                     pygame.draw.circle(self.screen, (gray), (45+60*(i),45+60*(j)), 5)
-    
+
     def mouse_get_position(self):
         mouse_pressed = pygame.mouse.get_pressed()
         if mouse_pressed[0]:  
@@ -253,20 +255,6 @@ class Osero:
                     else:
                         self.SWITCH=1
 
-class GA(Osero):
-   def __init__(self): 
-        pygame.init()
-        self.screen = pygame.display.set_mode(SCR_RECT.size)
-        self.SWITCH=0
-        while True:
-            pygame.display.update()
-            self.draw_back()
-            self.amount = self.count_storn()
-            self.draw_txt(self.screen,self.amount)
-            self.next_draw()
-            self.storn_draw(self.screen)
-            pygame.display.set_caption("osero")
-            self.event()
 
 class VS_AI(Osero):
     def __init__(self):
@@ -296,6 +284,7 @@ class VS_AI(Osero):
         if self.SWITCH==1:
             const.storn_position[[AI_select[0]],[AI_select[1]]]=2
             self.reverse(AI_select)
+#            pygame.draw.circle(screen, (r_green), (45+60*(AI_select[0]),45+60*(AI_select[1])), 40)
             self.SWITCH=0
 
     def single_event(self):
@@ -328,8 +317,8 @@ class VS_AI(Osero):
                     const.storn_position = np.asarray([[0,0,0,0,0,0,0,0],
                                                        [0,0,0,0,0,0,0,0],
                                                        [0,0,0,0,0,0,0,0],
-                                                       [0,0,0,1,2,0,0,0],
                                                        [0,0,0,2,1,0,0,0],
+                                                       [0,0,0,1,2,0,0,0],
                                                        [0,0,0,0,0,0,0,0],
                                                        [0,0,0,0,0,0,0,0],
                                                        [0,0,0,0,0,0,0,0]])
@@ -340,5 +329,30 @@ class VS_AI(Osero):
                         self.SWITCH=1
                         self.next_draw()
                         self.AI_action()
-if __name__ == '__main__':
-    VS_AI()
+
+class GA(Osero):
+   def __init__(self): 
+        pygame.init()
+        self.screen = pygame.display.set_mode(SCR_RECT.size)
+        self.SWITCH=0
+        while True:
+            pygame.display.update()
+            self.draw_back()
+            self.amount = self.count_storn()
+            self.draw_txt(self.screen,self.amount)
+            self.next_draw()
+            self.storn_draw(self.screen)
+            pygame.display.set_caption("osero")
+            self.event()
+
+args=sys.argv
+args.append('main')
+if args[1] in 'AI':
+    if __name__ == '__main__':
+        VS_AI()
+elif args[1] in 'GA':
+    if __name__ == '__main__':
+        GA()
+elif args[1] in 'main':
+    if __name__ == '__main__':
+        Osero()
