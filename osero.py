@@ -280,7 +280,6 @@ class VS_AI(Osero):
                     AI_select=[i,j]
         if stock==-51:
             self.SWITCH=0
-            print("AI can't put!!")
         if self.SWITCH==1:
             const.storn_position[[AI_select[0]],[AI_select[1]]]=2
             self.reverse(AI_select)
@@ -331,7 +330,8 @@ class VS_AI(Osero):
                         self.AI_action()
 
 class GA(Osero):
-   def __init__(self): 
+#TODO learning
+    def __init__(self): 
         pygame.init()
         self.screen = pygame.display.set_mode(SCR_RECT.size)
         self.SWITCH=0
@@ -343,8 +343,81 @@ class GA(Osero):
             self.next_draw()
             self.storn_draw(self.screen)
             pygame.display.set_caption("osero")
-            self.event()
+            self.AI_action()
+            self.GA_event()
 
+    def AI_action(self):
+        stock=-51
+        if self.SWITCH==1:
+            for i in range(8):
+                for j in range(8):
+                    if const.storn_position[i,j] == 3 and stock<=const.value_storn[i,j]:
+                        stock=const.value_storn[i,j]
+                        AI_select=[i,j]
+            if stock==-51:
+                self.SWITCH=0
+            if self.SWITCH==1:
+                const.storn_position[[AI_select[0]],[AI_select[1]]]=2
+                self.reverse(AI_select)
+                self.SWITCH=0
+        elif self.SWITCH==0:
+            for i in range(8):
+                for j in range(8):
+                    if const.storn_position[i,j] == 3 and stock<=const.value_storn[i,j]:
+                        stock=const.value_storn[i,j]
+                        AI_select=[i,j]
+            if stock==-51:
+                self.SWITCH=1
+            if self.SWITCH==0:
+                const.storn_position[[AI_select[0]],[AI_select[1]]]=2
+                self.reverse(AI_select)
+                self.SWITCH=1
+        if self.amount[2] == 64 or self.amount[0]==0 or self.amount[1]==0:
+            const.storn_position = np.asarray([[0,0,0,0,0,0,0,0],
+                                               [0,0,0,0,0,0,0,0],
+                                               [0,0,0,0,0,0,0,0],
+                                               [0,0,0,2,1,0,0,0],
+                                               [0,0,0,1,2,0,0,0],
+                                               [0,0,0,0,0,0,0,0],
+                                               [0,0,0,0,0,0,0,0],
+                                               [0,0,0,0,0,0,0,0]])
+            if self.amount[0]==0 or self.amount[0]<self.amount[1]:
+                print("brack_win")
+            elif self.amount[1]==0 or self.amount[0]>self.amount[1]:
+                print("white_win")
+            elif self.amount[0]==self.amount[1]:
+                print("draw")
+
+    def GA_event(self):
+        for event in pygame.event.get():
+            if event.type==QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type==KEYDOWN:
+                if event.key==K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+                if event.key == K_SPACE:
+                    print(const.storn_position)
+            if event.type == MOUSEBUTTONDOWN and event.button == 1:
+                mouse_position=self.mouse_get_position()
+                if mouse_position[0]>525 and mouse_position[0]<725 and mouse_position[1]>295 and mouse_position[1]<405:
+                    const.storn_position = np.asarray([[0,0,0,0,0,0,0,0],
+                                                       [0,0,0,0,0,0,0,0],
+                                                       [0,0,0,0,0,0,0,0],
+                                                       [0,0,0,2,1,0,0,0],
+                                                       [0,0,0,1,2,0,0,0],
+                                                       [0,0,0,0,0,0,0,0],
+                                                       [0,0,0,0,0,0,0,0],
+                                                       [0,0,0,0,0,0,0,0]])
+                if mouse_position[0]>525 and mouse_position[0]<725 and mouse_position[1]>165 and mouse_position[1]<275:
+                    if self.SWITCH==1:
+                        self.SWITCH=0
+                    else:
+                        self.SWITCH=1
+                        self.next_draw()
+                        self.AI_action()
+                
 args=sys.argv
 args.append('main')
 if args[1] in 'AI':
