@@ -5,11 +5,13 @@ made osero which is borad_game
 ## Description
 I use pyhton3 and pygame
 ## way to use
-*$ python osero.py*    --> human vs human
+```bash
+$ python osero.py*    --> human vs human
 
-*$ python osero.py AI* --> human vs AI
+$ python osero.py AI* --> human vs AI
 
-*$ python osero.py GA* --> AI    vs AI 　(...in production)
+$ python osero.py GA* --> AI    vs AI 　(...in production)
+```
 ## Requirement
 python3,pygame
 ## rule
