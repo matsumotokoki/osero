@@ -18,3 +18,6 @@ python3,pygame
 Place your stones to sandwich other's, then turn over the sandwiched
 a stone or stones.
 Finaly,players who have more stones will win.
+
+## image
+![image](game_image.png "osero")
